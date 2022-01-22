@@ -1,0 +1,18 @@
+{
+    "name": "static-audio",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Dave Murray-Rust <dave@murray-rust.org>",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+      "shared",
+      "static-audio-client",
+      "static-audio-server"
+    ],
+    "scripts": {
+      "server": "yarn workspace static-audio-server",
+      "client": "yarn workspace static-audio-client",
+      "shared": "yarn workspace shared"
+    }
+  }

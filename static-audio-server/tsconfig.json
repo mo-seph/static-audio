@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      /* Basic Options */
+      "outDir": "dist",
+      "rootDir": "src",
+      "esModuleInterop": true,
+    },
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "include": ["src"],
+    "references": [{ "path": "../shared" }]
+  }

@@ -1,0 +1,19 @@
+{
+    "name": "shared",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "author": "Dave Murray-Rust <dave@murray-rust.org>",
+    "license": "MIT",
+    "scripts": {
+        "index":"node --loader ts-node/esm ./src/DirectoryIndex.ts"
+    },
+    "devDependencies": {
+        "ts-node": "^10.4.0",
+        "typescript": "^4.5.5"
+    },
+    "dependencies": {
+        "@types/adm-zip": "^0.4.34",
+        "adm-zip": "^0.5.9"
+    }
+}
