@@ -21,5 +21,5 @@
     "jsx": "react-jsx"
   },
   "include": [ "src", "../static-audio-shared/src/index_directory.ts" ],
-  "references": [{ "path": "../static-audio-shared" }]
+  "references": [{ "path": "../shared" }]
 }

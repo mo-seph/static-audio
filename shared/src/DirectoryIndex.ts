@@ -5,12 +5,18 @@ import {exec} from 'child_process'
 
 // rather than import, if we use it with node :/
 import * as fs from 'fs'
+import * as path from 'path';
 //const fs = require('fs');
 import AdmZip from 'adm-zip'
 
 
 const filetypes = ['mp3','wav']
 
+//import 'dotenv/config'
+import dotenv from 'dotenv'
+const pt = path.join(__dirname,"../../.env") 
+dotenv.config({path: pt});
+console.log("Media Root: ",process.env.MEDIA_ROOT)
 
 function index_files(root:string) : void {
   console.log("Indexing: ", root)
@@ -18,7 +24,7 @@ function index_files(root:string) : void {
   //
   const jd = "export const playlists = " + JSON.stringify(result,null,2)
   console.log("Final Result: ",jd)
-  fs.writeFile("./public/media/playlists.json",JSON.stringify(result,null,2), (f)=>{if(f) console.log(f)})
+  fs.writeFile(root + "/playlists.json",JSON.stringify(result,null,2), (f)=>{if(f) console.log(f)})
 }
 
 function processDir(path:string,root:string) : PlaylistDef[] {
@@ -108,4 +114,4 @@ function audioFile(path:string):boolean {
   }
   return false
 }
-index_files("./public/media");
+index_files(process.env.MEDIA_ROOT);
