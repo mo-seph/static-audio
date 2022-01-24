@@ -12,27 +12,22 @@ import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min";
 // @ts-ignore
 import { WaveSurfer, WaveForm} from "wavesurfer-react";
 
-import './App.css';
-import {  Paper, Card,  CardHeader, Typography,Avatar, 
-    Grid, List, ListItem, ListItemAvatar, ListItemText, 
-    ListItemButton, TextField } from '@mui/material';
+import {  Paper, Typography, Grid  } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Download, PlayArrow, Pause} from '@mui/icons-material';
+import { PlayArrow, Pause} from '@mui/icons-material';
 
 
 
 import { PlaylistDef, TrackDef, CommentCallback, CommentList, CommentStore, 
     TrackComment, toTimeString } from "shared";
 
-const mediaRoot = "/media"
+import PlaylistDisplay from "./PlaylistDisplay"
+import CommentDisplay from "./CommentDisplay"
+import TrackListDisplay from "./TrackListDisplay"
 
-/*
-export function toTimeString(seconds:number) : string {
-    const secs = `${(Math.trunc(seconds) % 60)}`.padStart(2,'0')
-    const mins = `${Math.trunc(seconds/60)}`.padStart(2,'0')
-    return `${mins}:${secs}`
-}
-*/
+
+
+const mediaRoot = "/media"
 
 const plugins = [
   {
@@ -55,127 +50,6 @@ const plugins = [
   }
   */
 ];
-
-var wavesurfer;
-
-
-
-export interface TracklistDisplaySpec {
-    playlist:PlaylistDef
-    callback:(t:TrackDef)=>any
-}
-const TrackListDisplay = (props:TracklistDisplaySpec) => {
- 
-    return (
-    <Paper elevation={3}>
-    <List dense={true} disablePadding={true} sx={{ width: '100%', height:400, bgcolor: 'background.paper', overflow:"scroll", }}>
-        {props.playlist.tracks.map((track,num) => (<>
-            <ListItem disablePadding={true} secondaryAction={<a href={mediaRoot + "/" + track.url}><Download color='primary'/></a>} >
-                <ListItemButton>
-                <ListItemAvatar onClick={() => props.callback(track)}><PlayArrow color='primary'/></ListItemAvatar>
-                <ListItemText
-                    onClick={() => props.callback(track)}
-                    primary={track.name || track.url}
-                    secondary={track.length || "?:?"}
-                />
-                </ListItemButton>
-            </ListItem>
-        </>)) }
-    </List>
-    </Paper>
-    )
-  
-}
-
-
-const PlaylistDisplay = (props:any) => {
-    const pd = props.playlist as PlaylistDef
-    const theme = useTheme()
-    return (
-        <Card key={props.num} color={theme.palette.primary.light}> 
-            <CardHeader 
-                title={<>
-                    <Typography variant="h4" color="primary" align="left">{pd.name}</Typography>
-                    {pd.image_url ? <Avatar src={mediaRoot + "/" +pd.image_url} variant="rounded" sx={{ width: 200, height: 200 }}/> : ""}
-                    </>}
-                action={
-                <div>
-                    {pd.archive_url ? <a href={mediaRoot + "/" + pd.archive_url}><Download color='primary'/></a> : <Download color='disabled'/>}
-                </div>}
-                    >
-            </CardHeader>
-        </Card>
-    )
-}
-
-interface CommentDisplaySetup {
-    comments:CommentList
-    store:CommentStore
-    track:TrackDef
-    callback:(t:TrackComment) => void
-    wave:WaveSurfer
-}
-const CommentDisplay = (props:CommentDisplaySetup) => {
-    const theme = useTheme()
-    const [time,setTime] = useState(0)
-    const [user,setUser] = useState("Hanny") // Should come from local storage?
-    const [text,setText] = useState("") // Should come from local storage?
-    const [typing,setTyping] = useState(false)
-    const updateTime = () => {
-        const t = Math.floor(props.wave.getCurrentTime())
-        console.log("Updated time: ",t)
-        setTime(t)
-    }
-    
-    const addComment = () => {
-        props.store.addComment(props.track.url,
-            {user:user,start:time,text:text,id:Math.floor(Math.random() * 10000 )})
-        setText("")
-        setTyping(false)
-    }
-
-    const handleKeyPress = (event:React.KeyboardEvent) => {
-        if( ! typing ) {
-            setTyping(true)
-            updateTime()
-        }
-        if (event.keyCode === 13 || event.which === 13) { // look for the `Enter` keyCode
-          addComment()
-        }
-      }
-            //<TextField variant="outlined" label={<>"Time"</>} value={time || 0} onChange={(v) => setTime(parseInt(v.target.value || "0"))}/>
-    return (<>
-    <Paper elevation={3}>
-
-       <Grid container spacing={2}>
-            <Grid item xs={2}>
-            <TextField variant="outlined" label="User" defaultValue={user} onChange={(v) => setUser(v.target.value)}/>
-            </Grid>
-            <Grid item xs={10}>
-            <TextField fullWidth variant="outlined" label="Comment" 
-                value={text} onChange={(v) => setText(v.target.value)}
-                onKeyPress={(e) => handleKeyPress(e)}/>
-            </Grid>
-        </Grid>
-        <List dense={true} disablePadding={true} sx={{ width: '100%', height:400, bgcolor: 'background.paper', overflow:"scroll", }}>
-            {(props.comments || []).sort((c,d)=>c.start-d.start).map((comment,num) => (<>
-                <ListItem disablePadding={true} >
-                    <ListItemButton>
-                    <ListItemAvatar ><PlayArrow color='primary'/></ListItemAvatar>
-                    <ListItemText
-                        onClick={() => props.callback(comment)}
-                        primary={`${comment.user}: ${comment.text}`}
-                        secondary={`${toTimeString(comment.start)}`}
-                    />
-                    </ListItemButton>
-                </ListItem>
-            </>)) }
-        </List>
-
-    </Paper>
-    </>
-        )
-}
 
 interface PlaylistSetup {
     playlist:PlaylistDef
@@ -290,21 +164,10 @@ export default (setup:PlaylistSetup) => {
         //wavesurferRef.current.playPause().then((d:any) => {console.log("playing: ",d)});
     }, [playing]);
 
-
-    //<Paper className='main-container'></Paper>
-        //<div className="tracklist-container">
-    /*  <Box height={400} sx={{
-            overflow:"scroll",
-            textAlign:"left"
-            }}>
-            {setup.playlist.tracks.map((t,i) => (
-                <TrackListElement item={t} callback={setNewTrack} num={i} />
-            )) }
-        </Box>*/
     return (
     <Grid container spacing={4} >
         <Grid item xs={4}>
-            <PlaylistDisplay playlist={setup.playlist}/>
+            <PlaylistDisplay playlist={setup.playlist} mediaRoot={mediaRoot}/>
         </Grid>
  
         <Grid item xs={12}>
@@ -333,7 +196,7 @@ export default (setup:PlaylistSetup) => {
         </Paper>
         </Grid>
         <Grid item xs={4}>
-            <TrackListDisplay playlist={setup.playlist} callback={setNewTrack}  />
+            <TrackListDisplay playlist={setup.playlist} callback={setNewTrack} mediaRoot={mediaRoot} />
         </Grid>
         <Grid item xs={8}>
             <CommentDisplay comments={comments} callback={playCallback}  wave={wavesurferRef.current} store={setup.comments} track={track}/>

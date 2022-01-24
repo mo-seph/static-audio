@@ -1,7 +1,6 @@
 import {useState, useEffect, useCallback} from "react"
 import { useLocation, Link } from 'react-router-dom';
 
-import './App.css';
 import { Button,Card,  CardActions } from '@mui/material';
 
 import Player from "./Player";

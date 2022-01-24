@@ -1,5 +1,5 @@
 import  { useEffect, useState } from 'react';
-import './App.css';
+//import './App.css';
 import Playlist from './PlaylistManager';
 import {PlaylistDef, MemoryCommentStore } from 'shared'
 
@@ -12,8 +12,8 @@ export const emptyPlaylist:PlaylistDef = {
   tracks: [ {name:"No track loaded",url:"./"}]
 }
 
-//const comments = new MemoryCommentStore()
-const comments = new WebsocketCommentClient()
+const comments = new MemoryCommentStore()
+//const comments = new WebsocketCommentClient()
 
 function App() {
   const [playlists,setPlaylists] = useState([emptyPlaylist])

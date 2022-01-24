@@ -114,4 +114,4 @@ function audioFile(path:string):boolean {
   }
   return false
 }
-index_files(process.env.MEDIA_ROOT);
+index_files(process.env.MEDIA_ROOT || "./public/media");
