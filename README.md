@@ -67,6 +67,7 @@ rsync -v -e ssh -aqr public/media/ <user>@<host>:<wherever you put it>/public/me
 - Create zips of directories for download
 
 ## Development
+- Persistent store for comments (probably using https://github.com/simonlast/node-persist)
 - Set up top level scripts and document
 - Allow config of media directory
 - Allow media directory outside project DIR

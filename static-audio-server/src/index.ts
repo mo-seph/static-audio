@@ -1,5 +1,5 @@
 import {MemoryCommentStore,toTimeString} from 'shared'
-import setupWebsocket from './WebsocketCommentBackend'
+import setupWebsocket from './WebsocketCommentAdaptor'
 
 
 console.log("Time string: ",toTimeString(127))
