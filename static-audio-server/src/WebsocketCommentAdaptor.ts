@@ -53,7 +53,8 @@ export default function setupWebSocket(server:http.Server,comments:CommentStore)
             }
             else if( action == 'get' ) {
                 console.log(`Getting all comments for ${url}`)
-                comments.getComments(url).then( cl => ctx.send(JSON.stringify({url:url,comments:cl})) )
+                comments.requestUpdate(url)
+                //comments.getComments(url).then( cl => ctx.send(JSON.stringify({url:url,comments:cl})) )
             }
             else {
                 console.log("Unknown action: ", action)

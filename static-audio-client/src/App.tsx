@@ -12,8 +12,8 @@ export const emptyPlaylist:PlaylistDef = {
   tracks: [ {name:"No track loaded",url:"./"}]
 }
 
-const comments = new MemoryCommentStore()
-//const comments = new WebsocketCommentClient()
+//const comments = new MemoryCommentStore()
+const comments = new WebsocketCommentClient()
 
 function App() {
   const [playlists,setPlaylists] = useState([emptyPlaylist])
@@ -30,6 +30,8 @@ function App() {
       console.log("Got data!",data)
       setPlaylists(data)
     })
+    console.log("Initialising Comments")
+    comments.init()
   },[])
   return (
     <Router>

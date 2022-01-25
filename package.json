@@ -6,13 +6,13 @@
     "license": "MIT",
     "private": true,
     "workspaces": [
-      "shared",
-      "static-audio-client",
-      "static-audio-server"
+        "shared",
+        "static-audio-client",
+        "static-audio-server"
     ],
     "scripts": {
-      "server": "yarn workspace static-audio-server",
-      "client": "yarn workspace static-audio-client",
-      "shared": "yarn workspace shared"
+        "server": "yarn workspace static-audio-server",
+        "client": "yarn workspace static-audio-client",
+        "shared": "yarn workspace shared"
     }
-  }
+}

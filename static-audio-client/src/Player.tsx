@@ -143,7 +143,7 @@ export default (setup:PlaylistSetup) => {
         else wavesurferRef.current.load(fn);
         //wavesurferRef.current.clearMarkers()
         setTrack(t)
-        setup.comments.getComments(t.url).then((c)=>updateComments(t.url,c))
+        setup.comments.requestUpdate(t.url)
     }, []);
 
     const playCallback = (c:TrackComment) => {

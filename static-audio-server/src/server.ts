@@ -16,14 +16,17 @@ import * as path from 'path';
 
 // Might look at this for sharing code if it feels useful: https://stackoverflow.com/questions/59571680/react-backend-project-structure-when-sharing-code
 //import { CommentStore, MemoryCommentStore } from '../../shared/src/Comments'
-import { CommentStore, TrackComment, TestClass, MemoryCommentStore,TrackDef } from 'shared'
+import { CommentStore, TrackComment, TestClass, MemoryCommentStore,TrackDef} from 'shared'
+import { PersistentCommentStore } from './PersistentComments';
 import setupWebsocket from './WebsocketCommentAdaptor'
 
 const t : TrackDef = {url:""}
 const tc: TrackComment = {id:1, user:"Jim",start:0,text:""}
 const tt = new TestClass()
 
-const store : CommentStore = new MemoryCommentStore()
+//const store : CommentStore = new MemoryCommentStore()
+const store : CommentStore = new PersistentCommentStore()
+store.init()
 console.log("Store: ", store)
 
 // -------------------firing express app

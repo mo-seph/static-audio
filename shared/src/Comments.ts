@@ -17,10 +17,11 @@ export class TestClass {
 
 
 export interface CommentStore {
+    init() : void
     addComment( url:string, c:TrackComment ) : void 
     removeComment(  url:string,c:TrackComment ) : void 
     clearComments( url:string,) : void
-    getComments(url:string) : Promise<CommentList>
+    requestUpdate(url:string):void
     onChange(c:CommentCallback) : void
 }
 
@@ -60,51 +61,61 @@ function randomComments(num:number) : CommentList {
     return r
 }
 
-export class MemoryCommentStore implements CommentStore {
-    comments : Record<string,CommentList> = {}
+export abstract class BaseCommentStore implements CommentStore {
     callbacks : CommentCallback[] = []
-    constructor( ) {
-        console.log("New Memory CommentStore!")
+    update(url:string, f:(c:CommentList)=>CommentList) {
+        this.doUpdate(url,f).then(() => 
+            this.changed(url)
+        )
     }
+    constructor() { console.log(`New ${this.constructor.name}!`) }
+    init() {console.log(`Initialising ${this.constructor.name}`)}
+
+    abstract doUpdate(url:string, f:(c:CommentList)=>CommentList):Promise<any>
+    abstract comments(url:string) : Promise<CommentList>
 
     addComment( url:string, c:TrackComment ) : void {
         console.log(`Adding comment ${c} to url ${url}`)
-        this.ensure(url)
-        this.comments[url].push(c)
-        console.log("Firing changes...")
-        this.changed(url)
+        this.update(url, (cl)=>cl.concat(c))
     }
     removeComment( url:string, c:TrackComment ) : void {
-        this.ensure(url)
-        this.comments[url] = this.comments[url].filter(obj => obj !== c);
-        this.changed(url)
+        this.update(url, (cl)=>cl.filter(obj => obj !== c))
     }
 
     clearComments( url:string ) {
-        this.comments[url] = []
+        this.update(url, (cl)=>[])
+    }
+    requestUpdate(url: string): void {
         this.changed(url)
-    }
-    ensure(url:string) {
-        console.log("Ensuring: ",url)
-        console.log("Comments: ",this.comments)
-        if( ! this.comments[url] ) {
-            console.log("No comments for ",url)
-            this.comments[url] = []
-        }
-        console.log("After: ",this.comments)
-    }
-
-    getComments(url:string) : Promise<CommentList> {
-        this.ensure(url)
-        return new Promise((resolve,reject)=>resolve(this.comments[url]))
     }
     changed(url:string) { 
         console.log("Comments firing changes for ",url)
-        this.callbacks.forEach(c => c(url, this.comments[url]))
+        this.comments(url).then( cl => {
+            console.log("Current comments: ", cl)
+            this.callbacks.forEach(c => c(url, cl))
+        })
     }
     onChange(c:CommentCallback) { 
-        //c(this.comments[this.url])
         this.callbacks.push(c) 
     }
+}
 
+export class MemoryCommentStore extends BaseCommentStore {
+    storedComments : Record<string,CommentList> = {}
+    callbacks : CommentCallback[] = []
+
+    doUpdate(url:string, f:(c:CommentList)=>CommentList):Promise<any> {
+        return this.comments(url).then( (c) => {
+            const u = f(c)
+            console.log("Storing comments: ",u)
+            this.storedComments[url] = u
+        })
+    }
+
+    comments(url:string) : Promise<CommentList> {
+        if( ! this.storedComments[url] ) {
+            this.storedComments[url] = []
+        }
+        return new Promise((resolve,reject)=>resolve(this.storedComments[url]))
+    }
 }

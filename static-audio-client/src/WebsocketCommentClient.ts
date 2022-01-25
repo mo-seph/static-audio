@@ -5,34 +5,43 @@ import { CommentCallback, CommentList, CommentStore, TrackComment } from "shared
 
 export default class WebsocketCommentClient implements CommentStore {
     callbacks : CommentCallback[] = []
-    ws = new WebSocket('ws://localhost:5000/ws');
+    ws?: WebSocket = undefined
 
     constructor( ) {
         console.log("New WebSocket CommentStore!")
-        // setup websocket
-        this.ws.onopen = () => {
-          console.log('Connected to socket');
-        }
+ 
+    }
 
-        this.ws.onmessage = (m) => {
-            console.log("Got message: ",m)
-            try {
-                console.log("Got data: ",m.data)
-                const data = JSON.parse(m.data)
-                console.log("Got JSON: ",data)
-                const url = data['url']
-                const comments = data['comments']
-                this.changed(url,comments)
-            } catch (e) {
-                console.log("Couldn't decode WS message: ", e)
-            }
-        }
+    init() {
+      this.ws = new WebSocket('ws://localhost:5000/ws');
+       // setup websocket
+      this.ws.onopen = () => {
+        console.log('Connected to socket');
+      }
+
+      this.ws.onmessage = (m) => {
+          console.log("Got message: ",m)
+          try {
+              console.log("Got data: ",m.data)
+              const data = JSON.parse(m.data)
+              console.log("Got JSON: ",data)
+              const url = data['url']
+              const comments = data['comments']
+              this.changed(url,comments)
+          } catch (e) {
+              console.log("Couldn't decode WS message: ", e)
+          }
+      }
 
     }
 
     send(data:any) {
         try {
-            this.ws.send( JSON.stringify(data) )
+            if(this.ws) {
+                this.ws.send( JSON.stringify(data) )
+            } else {
+                console.log("Websocket not initialised...")
+            }
         } catch( e ) {
             console.log("Couldn't send: ", e)
         }
@@ -49,10 +58,8 @@ export default class WebsocketCommentClient implements CommentStore {
         this.send( { url:url, action:'clear'})
     }
 
-    getComments(url:string) : Promise<CommentList> {
+    requestUpdate(url:string) : void {
         this.send( { url:url, action:'get'})
-        return new Promise((resolve,reject)=>resolve([]))
-        //return null
     }
     changed(url:string, cl:CommentList) { 
         console.log("Comments firing changes for ",url)

@@ -68,11 +68,11 @@ rsync -v -e ssh -aqr public/media/ <user>@<host>:<wherever you put it>/public/me
 
 ## Development
 - Persistent store for comments (probably using https://github.com/simonlast/node-persist)
+- Comment editing
 - Set up top level scripts and document
 - Allow config of media directory
 - Allow media directory outside project DIR
 - Top level scripts for deployment
-- Refactor client components out into individual files
 
 ## Bugfix
 - [ ] Debug wavefile pre-creation - at the moment, seems to stop it from loading
