@@ -12,7 +12,7 @@ import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min";
 // @ts-ignore
 import { WaveSurfer, WaveForm} from "wavesurfer-react";
 
-import {  Paper, Typography, Grid  } from '@mui/material';
+import {  Paper, Typography, Grid, Box  } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { PlayArrow, Pause} from '@mui/icons-material';
 
@@ -50,6 +50,40 @@ const plugins = [
   }
   */
 ];
+
+
+interface WSProps {
+    play:()=>void
+    playing:boolean
+    track:TrackDef
+    handleWSMount:(waveSurfer: any) => void
+}
+const WaveSurferInterface = (props:WSProps) => {
+    const theme = useTheme()
+    return <>
+        <div className="waveform-buttons">
+            <button onClick={props.play} className="waveform-button">{props.playing ? <Pause color='secondary'/>: <PlayArrow color='secondary'/>}</button>
+        </div>   
+        <div className="waveform-title">
+            <Typography variant="h6" color="primary" align="left">{props.track.name}</Typography>
+        </div>
+        <div className="clear"></div>
+        <div className="waveform-container">
+        
+            <WaveSurfer plugins={plugins} onMount={props.handleWSMount}>
+            <WaveForm id="waveform" 
+                backgroundColor="#eee"
+                progressColor={theme.palette.warning.dark}
+                cursorColor={theme.palette.warning.dark}
+                waveColor={theme.palette.primary.dark}>
+            </WaveForm>
+            <div id="timeline" style={{background: "#eee"}}/>
+        
+            </WaveSurfer>
+    
+        </div>
+</>
+}
 
 interface PlaylistSetup {
     playlist:PlaylistDef
@@ -165,14 +199,36 @@ export default (setup:PlaylistSetup) => {
     }, [playing]);
 
     return (
-    <Grid container spacing={4} >
+    <Grid container spacing={2} padding={1}>
         <Grid item xs={4}>
             <PlaylistDisplay playlist={setup.playlist} mediaRoot={mediaRoot}/>
         </Grid>
+        <Grid item xs={8}>
+            <TrackListDisplay playlist={setup.playlist} callback={setNewTrack} mediaRoot={mediaRoot} />
+        </Grid>
  
         <Grid item xs={12}>
-        <Paper elevation={3}>
-            <div className="waveform-buttons">
+        <Paper elevation={10} sx={{"padding":1}}>
+            <WaveSurferInterface play={play} playing={playing} handleWSMount={handleWSMount} track={track}/>
+        </Paper>
+        </Grid>
+        <Grid item xs={12}>
+        </Grid>
+ 
+        <Grid item xs={12}>
+            <CommentDisplay 
+                comments={comments} 
+                playComment={playCallback}  
+                wave={wavesurferRef.current} 
+                store={setup.comments} track={track}/>
+
+        </Grid>
+    </Grid>
+    );
+}
+
+/*
+        <div className="waveform-buttons">
                 <button onClick={play} className="waveform-button">{playing ? <Pause color='secondary'/>: <PlayArrow color='secondary'/>}</button>
             </div>   
             <div className="waveform-title">
@@ -193,15 +249,4 @@ export default (setup:PlaylistSetup) => {
                 </WaveSurfer>
         
             </div>
-        </Paper>
-        </Grid>
-        <Grid item xs={4}>
-            <TrackListDisplay playlist={setup.playlist} callback={setNewTrack} mediaRoot={mediaRoot} />
-        </Grid>
-        <Grid item xs={8}>
-            <CommentDisplay comments={comments} callback={playCallback}  wave={wavesurferRef.current} store={setup.comments} track={track}/>
-
-        </Grid>
-    </Grid>
-    );
-}
+            */

@@ -8,6 +8,7 @@ export interface TrackComment {
     end?: number;
     text: string;
 }
+export type InputComment = Omit<TrackComment,"id">;
 
 export class TestClass {
     constructor( ) {
@@ -18,8 +19,8 @@ export class TestClass {
 
 export interface CommentStore {
     init() : void
-    addComment( url:string, c:TrackComment ) : void 
-    removeComment(  url:string,c:TrackComment ) : void 
+    addComment( url:string, c:InputComment ) : void 
+    removeComment(  url:string,id:number ) : void 
     clearComments( url:string,) : void
     requestUpdate(url:string):void
     onChange(c:CommentCallback) : void
@@ -73,13 +74,16 @@ export abstract class BaseCommentStore implements CommentStore {
 
     abstract doUpdate(url:string, f:(c:CommentList)=>CommentList):Promise<any>
     abstract comments(url:string) : Promise<CommentList>
+    abstract generateID(c:InputComment) : Promise<number>
 
-    addComment( url:string, c:TrackComment ) : void {
+    addComment( url:string, c:InputComment ) : void {
         console.log(`Adding comment ${c} to url ${url}`)
-        this.update(url, (cl)=>cl.concat(c))
+        this.generateID(c).then( (id) => 
+            this.update(url, (cl)=>cl.concat({...c,"id":id}))
+        )
     }
-    removeComment( url:string, c:TrackComment ) : void {
-        this.update(url, (cl)=>cl.filter(obj => obj !== c))
+    removeComment( url:string, id:number ) : void {
+        this.update(url, (cl)=>cl.filter(obj => obj.id !== id))
     }
 
     clearComments( url:string ) {
@@ -103,6 +107,7 @@ export abstract class BaseCommentStore implements CommentStore {
 export class MemoryCommentStore extends BaseCommentStore {
     storedComments : Record<string,CommentList> = {}
     callbacks : CommentCallback[] = []
+    id = 0
 
     doUpdate(url:string, f:(c:CommentList)=>CommentList):Promise<any> {
         return this.comments(url).then( (c) => {
@@ -117,5 +122,10 @@ export class MemoryCommentStore extends BaseCommentStore {
             this.storedComments[url] = []
         }
         return new Promise((resolve,reject)=>resolve(this.storedComments[url]))
+    }
+
+    generateID(c:InputComment) : Promise<number> {
+        this.id = this.id + 1
+        return Promise.resolve(this.id)
     }
 }

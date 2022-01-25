@@ -27,3 +27,5 @@
 **/media
 
 **/.env
+
+**/.node-persist/*

@@ -1,4 +1,4 @@
-import {BaseCommentStore, CommentList, TrackComment, CommentCallback} from "shared"
+import {BaseCommentStore, CommentList, TrackComment, CommentCallback, InputComment} from "shared"
 import {init as initStorage, getItem,setItem} from "node-persist"
 
 
@@ -17,4 +17,13 @@ export class PersistentCommentStore extends BaseCommentStore {
         return getItem(url).then((c) => ((c || []) as CommentList))
     }
 
+    async generateID(c:InputComment) : Promise<number> {
+        //const id = (((await getItem("id") ) || 0 ) as number) + 1
+        return getItem("id").then((i) => {
+            return (i || 0) as number + 1 
+        }).then((id) => {
+            setItem("id",id)
+            return id
+        })
+    }
 }

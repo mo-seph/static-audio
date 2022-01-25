@@ -44,8 +44,8 @@ export default function setupWebSocket(server:http.Server,comments:CommentStore)
                 comments.addComment(url,data['comment'])
             }
             else if( action == 'remove' ) {
-                console.log(`Removing comment from ${url}: ${data['comment']}`)
-                comments.removeComment(url,data['comment'])
+                console.log(`Removing comment from ${url}: ${data['id']}`)
+                comments.removeComment(url,data['id'])
             }
             else if( action == 'clear' ) {
                 console.log(`Removing all comments from ${url}`)

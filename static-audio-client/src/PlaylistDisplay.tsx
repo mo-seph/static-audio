@@ -12,7 +12,7 @@ export default (props:PlaylistDisplaySpec) => {
     const pd = props.playlist as PlaylistDef
     const theme = useTheme()
     return (
-        <Card color={theme.palette.primary.light}> 
+        <Card color={theme.palette.primary.light} sx={{"height":300}}> 
             <CardHeader 
                 title={<>
                     <Typography variant="h4" color="primary" align="left">{pd.name}</Typography>

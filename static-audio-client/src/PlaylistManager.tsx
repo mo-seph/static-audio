@@ -17,7 +17,7 @@ interface PlaylistManagerSetup {
 const PlaylistElement = (props:InterfaceSpec<PlaylistDef>) => {
         //<Link to={props.item.id} className="playlist-index-item">{props.item.name}</Link>
     return (
-      <Button component={Link} to={props.item.id} variant="contained" color="primary" key={props.num}>
+      <Button component={Link} to={props.item.id} key={props.item.id} variant="contained" color="primary" >
         {props.item.name}
       </Button>
     )
@@ -43,6 +43,7 @@ export default (setup:PlaylistManagerSetup) => {
       }, [])
 
         //<div className="playlist-index-container">
+                //<PlaylistElement item={t} callback={setNewPlaylist} num={i} />
     return (
       <div className="App">
         <Card variant="outlined">
@@ -50,7 +51,9 @@ export default (setup:PlaylistManagerSetup) => {
 
             {
                 setup.playlists.map((t,i) => 
-                    <PlaylistElement item={t} callback={setNewPlaylist} num={i} />
+                <Button component={Link} to={t.id} key={t.id} variant="contained" color="primary" >
+                  {t.name}
+                </Button>
                 )
             }
             </CardActions>

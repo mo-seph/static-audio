@@ -50,8 +50,8 @@ export default class WebsocketCommentClient implements CommentStore {
     addComment( url:string, c:TrackComment ) : void {
         this.send( { url:url, action:'add', comment: c})
     }
-    removeComment( url:string, c:TrackComment ) : void {
-        this.send( { url:url, action:'remove', comment: c})
+    removeComment( url:string, id:number ) : void {
+        this.send( { url:url, action:'remove', id: id})
     }
 
     clearComments( url:string ) {

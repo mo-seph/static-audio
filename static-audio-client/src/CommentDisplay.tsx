@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import {  Paper, 
     Grid, List, ListItem, ListItemAvatar, ListItemText, 
     ListItemButton, TextField } from '@mui/material';
-import { PlayArrow } from '@mui/icons-material';
+import { PlayArrow, Delete, Edit } from '@mui/icons-material';
 
 import { TrackDef,  CommentList, CommentStore, 
     TrackComment, toTimeString } from "shared";
@@ -15,13 +15,13 @@ interface CommentDisplaySetup {
     comments:CommentList
     store:CommentStore
     track:TrackDef
-    callback:(t:TrackComment) => void
+    playComment:(t:TrackComment) => void
     wave:WaveSurfer
 }
 export default (props:CommentDisplaySetup) => {
     const theme = useTheme()
     const [time,setTime] = useState(0)
-    const [user,setUser] = useState("Hanny") // Should come from local storage?
+    const [user,setUser] = useState("User") // Should come from local storage?
     const [text,setText] = useState("") // Should come from local storage?
     const [typing,setTyping] = useState(false)
     const updateTime = () => {
@@ -32,7 +32,7 @@ export default (props:CommentDisplaySetup) => {
     
     const addComment = () => {
         props.store.addComment(props.track.url,
-            {user:user,start:time,text:text,id:Math.floor(Math.random() * 10000 )})
+            {user:user,start:time,text:text})
         setText("")
         setTyping(false)
     }
@@ -50,7 +50,7 @@ export default (props:CommentDisplaySetup) => {
     return (<>
     <Paper elevation={3}>
 
-       <Grid container spacing={2}>
+       <Grid container spacing={2} padding={2}>
             <Grid item xs={2}>
             <TextField variant="outlined" label="User" defaultValue={user} onChange={(v) => setUser(v.target.value)}/>
             </Grid>
@@ -62,13 +62,17 @@ export default (props:CommentDisplaySetup) => {
         </Grid>
         <List dense={true} disablePadding={true} sx={{ width: '100%', height:400, bgcolor: 'background.paper', overflow:"scroll", }}>
             {(props.comments || []).sort((c,d)=>c.start-d.start).map((comment,num) => (<>
-                <ListItem disablePadding={true} >
+                <ListItem disablePadding={true}              
+                    secondaryAction={ <>
+                      <Edit />
+                      <Delete onClick={()=>props.store.removeComment(props.track.url,comment.id)}/>
+                        </> }>
                     <ListItemButton>
                     <ListItemAvatar ><PlayArrow color='primary'/></ListItemAvatar>
                     <ListItemText
-                        onClick={() => props.callback(comment)}
+                        onClick={() => props.playComment(comment)}
                         primary={`${comment.user}: ${comment.text}`}
-                        secondary={`${toTimeString(comment.start)}`}
+                        secondary={`${toTimeString(comment.start)} (${comment.id})`}
                     />
                     </ListItemButton>
                 </ListItem>
