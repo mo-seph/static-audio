@@ -65,14 +65,16 @@ rsync -v -e ssh -aqr public/media/ <user>@<host>:<wherever you put it>/public/me
 - JSON file that specifies the playlist rather than generating it from the files (to allow names, track ordering etc.)
 - Artwork per playlist
 - Create zips of directories for download
+- Persistent store for comments (using https://github.com/simonlast/node-persist)
+- Export comments as CSV for import into e.g. Reaper
 
 ## Development
-- Persistent store for comments (probably using https://github.com/simonlast/node-persist)
 - Comment editing
 - Set up top level scripts and document
 - Allow config of media directory
 - Allow media directory outside project DIR
 - Top level scripts for deployment
+- Maps between marker times to allow for edits/changes to files
 
 ## Bugfix
 - [ ] Debug wavefile pre-creation - at the moment, seems to stop it from loading

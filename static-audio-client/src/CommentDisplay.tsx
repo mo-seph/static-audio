@@ -6,10 +6,29 @@ import { useTheme } from '@mui/material/styles';
 import {  Paper, 
     Grid, List, ListItem, ListItemAvatar, ListItemText, 
     ListItemButton, TextField } from '@mui/material';
-import { PlayArrow, Delete, Edit } from '@mui/icons-material';
+import { PlayArrow, Delete, Edit, Download } from '@mui/icons-material';
 
 import { TrackDef,  CommentList, CommentStore, 
-    TrackComment, toTimeString } from "shared";
+    TrackComment, toTimeString, commentsToCSV } from "shared";
+import {saveAs} from 'file-saver'
+
+interface CommentDownloadSetup {
+    comments:CommentList
+}
+const CommentDownload = (props:CommentDownloadSetup) => {
+    const [fileUrl,setFileUrl] = useState("")
+    const doDownload = () => {
+        const contents = commentsToCSV(props.comments)
+        console.log("Download...\n"+contents)
+        const blob = new Blob([contents], {type:"text/csv;charset=utf-8"});                   // Step 3
+        saveAs(blob, "comments.csv")
+        console.log("Done?")
+    }
+
+    return <>
+        <Download onClick={doDownload} />
+    </>
+}
 
 interface CommentDisplaySetup {
     comments:CommentList
@@ -54,10 +73,13 @@ export default (props:CommentDisplaySetup) => {
             <Grid item xs={2}>
             <TextField variant="outlined" label="User" defaultValue={user} onChange={(v) => setUser(v.target.value)}/>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={9}>
             <TextField fullWidth variant="outlined" label="Comment" 
                 value={text} onChange={(v) => setText(v.target.value)}
                 onKeyPress={(e) => handleKeyPress(e)}/>
+            </Grid>
+            <Grid item xs={1}>
+                <CommentDownload comments={props.comments}/>
             </Grid>
         </Grid>
         <List dense={true} disablePadding={true} sx={{ width: '100%', height:400, bgcolor: 'background.paper', overflow:"scroll", }}>

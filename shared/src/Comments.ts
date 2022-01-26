@@ -29,6 +29,26 @@ export interface CommentStore {
 export type CommentList = TrackComment[]
 export type CommentCallback = (url:string, c:CommentList) => void
 
+/*
+Example Reaper CSV:
+#,Name,Start,End,Length
+M5,,0:20.500,,
+M4,,0:10.233,,
+*/
+
+export function commentsToCSV(cl:CommentList) : string {
+    var file = "#,Name,Start,End,Length\n"
+    cl.sort((c,d)=>c.start-d.start).forEach((c,i)=>{
+        file += `M${i+1},${c.text.replace(/,/,"")},${secondsToMinSecMS(c.start)},${c.end ? secondsToMinSecMS(c.end) : ""},\n`
+    })
+    return file
+}
+
+export function secondsToMinSecMS(t:number) : string {
+    const mins = Math.floor(t / 60)
+    const secs = t - (mins*60)
+    return `${mins}:` + secs.toFixed(3).padStart(5)
+}
 const randomTexts = [
     'I like this',
     'This is terrible',
