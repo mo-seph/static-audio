@@ -12,7 +12,7 @@ import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min";
 // @ts-ignore
 import { WaveSurfer, WaveForm} from "wavesurfer-react";
 
-import {  Paper, Typography, Grid, Box  } from '@mui/material';
+import {  Paper, Typography, Grid, Box, Button, Theme  } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { PlayArrow, Pause} from '@mui/icons-material';
 
@@ -29,7 +29,8 @@ import TrackListDisplay from "./TrackListDisplay"
 
 const mediaRoot = "/media"
 
-const plugins = [
+const plugins = (theme:Theme) => {
+    return [
   {
     plugin: RegionsPlugin,
     options: { dragSelection: true }
@@ -41,7 +42,14 @@ const plugins = [
   {
     plugin: TimelinePlugin,
     options: {
-      container: "#timeline"
+      container: "#timeline",
+      //primaryColor: theme.palette.primary.main
+      primaryColor: "red",
+      secondaryColor: theme.palette.primary.main,
+      primaryFontColor: "red",
+      secondaryFontColor: theme.palette.primary.main,
+      fontFamily: "Roboto"
+
     }
   }
   /*
@@ -49,7 +57,7 @@ const plugins = [
     plugin: CursorPlugin
   }
   */
-];
+]};
 
 
 interface WSProps {
@@ -61,23 +69,30 @@ interface WSProps {
 const WaveSurferInterface = (props:WSProps) => {
     const theme = useTheme()
     return <>
-        <div className="waveform-buttons">
-            <button onClick={props.play} className="waveform-button">{props.playing ? <Pause color='secondary'/>: <PlayArrow color='secondary'/>}</button>
-        </div>   
         <div className="waveform-title">
-            <Typography variant="h6" color="primary" align="left">{props.track.name}</Typography>
+            <Typography variant="h6" color="primary" align="left">
+                <Button variant='outlined' onClick={props.play}>
+                    {props.playing ? <Pause />: <PlayArrow />}
+                </Button>
+                &nbsp;
+                {props.track.name}
+            </Typography>
         </div>
         <div className="clear"></div>
         <div className="waveform-container">
         
-            <WaveSurfer plugins={plugins} onMount={props.handleWSMount}>
+            <WaveSurfer plugins={plugins(theme)} onMount={props.handleWSMount}>
             <WaveForm id="waveform" 
-                backgroundColor="#eee"
+                //backgroundColor={theme.palette.background.paper}
                 progressColor={theme.palette.warning.dark}
                 cursorColor={theme.palette.warning.dark}
-                waveColor={theme.palette.primary.dark}>
+                waveColor={theme.palette.primary.main}>
             </WaveForm>
-            <div id="timeline" style={{background: "#eee"}}/>
+            <div id="timeline" style={{
+                //background: theme.palette.background.paper ,
+                //background: theme.palette.info.dark,
+                color: theme.palette.info.contrastText
+                }}/>
         
             </WaveSurfer>
     
@@ -120,7 +135,9 @@ export default (setup:PlaylistSetup) => {
             console.log("Adding marker: ", c)
             wavesurferRef.current.addMarker({
                 time:c.start,
-                label:c.text
+                label:c.text,
+                color: theme.palette.warning.dark
+
             })
         })
     }, [])
