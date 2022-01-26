@@ -20,8 +20,8 @@ const comments = new WebsocketCommentClient()
 function App() {
   const [playlists,setPlaylists] = useState([emptyPlaylist])
 
-  //const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const prefersDarkMode = false
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  //const prefersDarkMode = false
 
   const theme = useMemo(
     () =>
