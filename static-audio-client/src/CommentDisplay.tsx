@@ -82,7 +82,7 @@ export default (props:CommentDisplaySetup) => {
                 <CommentDownload comments={props.comments}/>
             </Grid>
         </Grid>
-        <List dense={true} disablePadding={true} sx={{ width: '100%', height:400, bgcolor: 'background.paper', overflow:"scroll", }}>
+        <List dense={true} disablePadding={true} sx={{ width: '100%', height:400,  overflow:"scroll", }}>
             {(props.comments || []).sort((c,d)=>c.start-d.start).map((comment,num) => (<>
                 <ListItem disablePadding={true}              
                     secondaryAction={ <>

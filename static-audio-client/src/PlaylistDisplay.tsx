@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import {   Card,  CardHeader, Typography,Avatar, } from '@mui/material';
+import {   Card,  CardHeader, Typography,Avatar, Paper} from '@mui/material';
 import { Download} from '@mui/icons-material';
 
 import { PlaylistDef} from "shared";
@@ -12,6 +12,7 @@ export default (props:PlaylistDisplaySpec) => {
     const pd = props.playlist as PlaylistDef
     const theme = useTheme()
     return (
+    <Paper elevation={3}>
         <Card color={theme.palette.primary.light} sx={{"height":300}}> 
             <CardHeader 
                 title={<>
@@ -25,5 +26,6 @@ export default (props:PlaylistDisplaySpec) => {
                     >
             </CardHeader>
         </Card>
+    </Paper>
     )
 }

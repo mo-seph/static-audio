@@ -14,7 +14,7 @@ const TrackListDisplay = (props:TracklistDisplaySpec) => {
     
     return (
     <Paper elevation={3}>
-    <List dense={true} disablePadding={true} sx={{ width: '100%', height:300, bgcolor: 'background.paper', overflow:"scroll", }}>
+    <List dense={true} disablePadding={true} sx={{ width: '100%', height:300,  overflow:"scroll", }}>
         {props.playlist.tracks.map((track,num) => (<>
             <ListItem key={track.url} disablePadding={true} secondaryAction={<a href={props.mediaRoot + "/" + track.url}><Download color='primary'/></a>} >
                 <ListItemButton>
