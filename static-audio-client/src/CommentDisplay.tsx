@@ -90,7 +90,7 @@ export default (props:CommentDisplaySetup) => {
                       <Delete onClick={()=>props.store.removeComment(props.track.url,comment.id)}/>
                         </> }>
                     <ListItemButton>
-                    <ListItemAvatar ><PlayArrow color='primary'/></ListItemAvatar>
+                    <ListItemAvatar ><PlayArrow color='primary' onClick={() => props.playComment(comment)}/></ListItemAvatar>
                     <ListItemText
                         onClick={() => props.playComment(comment)}
                         primary={`${comment.user}: ${comment.text}`}
