@@ -13,7 +13,8 @@ export default class WebsocketCommentClient implements CommentStore {
     }
 
     init() {
-      this.ws = new WebSocket('ws://localhost:5000/ws');
+      const server =  window.location.hostname 
+      this.ws = new WebSocket(`ws://${server}:5000/ws`);
        // setup websocket
       this.ws.onopen = () => {
         console.log('Connected to socket');
