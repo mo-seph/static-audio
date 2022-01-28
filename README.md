@@ -13,6 +13,7 @@ Features:
 - Additional information set with JSON files - no databases etc.
 - Run locally, deploy to remote machine
 - Download comments in a CSV file ready for Reaper (for collaborative discussion of mixes etc.)
+- Dark mode support
 
 ## Docs need updating after refactor...
 

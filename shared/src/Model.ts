@@ -11,6 +11,7 @@ export interface PlaylistDef {
     name: string
     id:string
     tracks:TrackDef[]
+    hidden?:boolean
 }
 
 export interface InterfaceSpec<T> {
@@ -18,6 +19,7 @@ export interface InterfaceSpec<T> {
     item:T,
     callback:(t:T)=>any
 }
+
 
 /*
 

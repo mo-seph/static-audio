@@ -18,5 +18,14 @@
       /* Advanced Options */
       "forceConsistentCasingInFileNames": true,
       "skipLibCheck": true
-    }
+    },
+    "exclude": [
+      "packages/**/tests/**",
+      "packages/**/dist/**"
+   ],
+    "references": [
+     { "path": "./shared" },
+     { "path": "./static-audio-server" },
+     { "path": "./static-audio-client" }
+   ]
   }

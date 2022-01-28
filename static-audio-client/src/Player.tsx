@@ -19,11 +19,16 @@ import { PlayArrow, Pause} from '@mui/icons-material';
 
 
 import { PlaylistDef, TrackDef, CommentCallback, CommentList, CommentStore, 
-    TrackComment, toTimeString } from "shared";
+    TrackComment, toTimeString} from "shared";
+
+import {PlaylistStore,useCurrentPlaylistID} from './helpers'
 
 import PlaylistDisplay from "./PlaylistDisplay"
+import PlaylistList from "./PlaylistManager"
 import CommentDisplay from "./CommentDisplay"
 import TrackListDisplay from "./TrackListDisplay"
+import { useLocation } from "react-router-dom";
+import { emptyPlaylist } from "./App";
 
 
 
@@ -100,26 +105,41 @@ const WaveSurferInterface = (props:WSProps) => {
 </>
 }
 
-interface PlaylistSetup {
-    playlist:PlaylistDef
+interface PlayerSetup {
+    playlists:PlaylistStore
     comments:CommentStore
 }
-export default (setup:PlaylistSetup) => {
+export default (setup:PlayerSetup) => {
+    const loc = useCurrentPlaylistID()
+    const [playlist,setPlaylist] = useState(emptyPlaylist)
+
     //const [playlist,setPlaylist] = useState(setup.playlist)
     const [track,setTrack] = useState(
-        (setup.playlist && setup.playlist.tracks.length) ? setup.playlist.tracks[0] : {name:"No tracks found",url:"./"})
+        (playlist && playlist.tracks.length) ? playlist.tracks[0] : {name:"No tracks found",url:"./"})
     
     const [playing,setPlaying] = useState(false)
     const [comments,setComments] = useState<CommentList>([])
     const [toggle,setToggle] = useState(false)
+
+
+    useEffect(() => {
+      const pl = setup.playlists.byID[loc]
+      if(pl) setNewPlaylist(pl)
+    },[setup.playlists, loc])
+
+
+    const setNewPlaylist = useCallback((p:PlaylistDef) => {
+        console.log("Set playlist: ",p)
+        setPlaylist(p)
+      }, [])
  
     const regionCreatedHandler = (r:any) => {}
     const theme = useTheme()
 
     useEffect( () => {
-        console.log("Playlist updated!",setup.playlist)
-        setNewTrack(setup.playlist.tracks[0])
-    },[setup.playlist])
+        console.log("Playlist updated!",playlist)
+        setNewTrack(playlist.tracks[0])
+    },[playlist])
 
     const isPlaying = useCallback(() => {
         console.log("Checking play status:",playing);
@@ -217,11 +237,14 @@ export default (setup:PlaylistSetup) => {
 
     return (
     <Grid container spacing={2} padding={1}>
-        <Grid item xs={4}>
-            <PlaylistDisplay playlist={setup.playlist} mediaRoot={mediaRoot}/>
+        <Grid item xs={3}>
+            <PlaylistList playlists={setup.playlists} />
         </Grid>
-        <Grid item xs={8}>
-            <TrackListDisplay playlist={setup.playlist} callback={setNewTrack} mediaRoot={mediaRoot} />
+        <Grid item xs={3}>
+            <PlaylistDisplay playlist={playlist} mediaRoot={mediaRoot}/>
+        </Grid>
+        <Grid item xs={6}>
+            <TrackListDisplay playlist={playlist} callback={setNewTrack} mediaRoot={mediaRoot} />
         </Grid>
  
         <Grid item xs={12}>

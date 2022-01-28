@@ -1,7 +1,10 @@
 import  { useEffect, useState } from 'react';
 //import './App.css';
-import Playlist from './PlaylistManager';
-import {PlaylistDef, MemoryCommentStore } from 'shared'
+//import Playlist from './PlaylistManager';
+import Player from './Player';
+import {PlaylistDef } from 'shared'
+import {PlaylistStore, toStore} from './helpers'
+//import {PlaylistStore, toStore, testFunction } from '../../shared/src'
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import WebsocketCommentClient from './WebsocketCommentClient';
@@ -18,7 +21,7 @@ export const emptyPlaylist:PlaylistDef = {
 const comments = new WebsocketCommentClient()
 
 function App() {
-  const [playlists,setPlaylists] = useState([emptyPlaylist])
+  const [playlists,setPlaylists] = useState({ordered:[],byID:{}} as PlaylistStore)
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   //const prefersDarkMode = false
@@ -44,7 +47,7 @@ function App() {
     })
     .then( data => {
       console.log("Got data!",data)
-      setPlaylists(data)
+      setPlaylists(toStore(data as PlaylistDef[]))
     })
     console.log("Initialising Comments")
     comments.init()
@@ -54,7 +57,7 @@ function App() {
     <CssBaseline />
     <Router>
     <div className="App">
-      <Playlist playlists = {playlists as PlaylistDef[]} comments = {comments}/>
+      <Player playlists = {playlists} comments = {comments}/>
     </div>
     </Router>
     </ThemeProvider>
